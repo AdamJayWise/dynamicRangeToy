@@ -56,22 +56,20 @@ function dynamicRangeViz(paramObj = {}){
     // copy values from parameter object to self, overwriting defaults
     Object.keys(paramObj).forEach(function(k){self[k]=paramObj[k]})
 
-    self.checkedGauss = function(a, x, m, s, noise){
-        var d = gauss(a, x, m, s, noise);
+    self.parentElement = d3.select(self.parentElementSelector);
+
+    self.limit = function(d){
         d = Math.min(self.wellDepth, d);
-
-        d = Math.round(d / self.gain);
-
+        d = Math.floor(d / self.gain);
         d = Math.min(2**self.bitDepth, d);
-
-        return d;
+        return d
     }
 
     self.data = []
     for (var i = -self.xRange / 2; i < self.xRange; i = i + 0.01){
-        var dA = self.checkedGauss(self.iA, i, self.mA, self.sigma, self.noise);
-        var dB = self.checkedGauss(self.iB, i, self.mB, self.sigma, self.noise);
-        self.data.push({'x' : i, y : dA + dB })
+        var dA = gauss(self.iA, i, self.mA, self.sigma, self.noise);
+        var dB = gauss(self.iB, i, self.mB, self.sigma, self.noise);
+        self.data.push({'x' : i, y : self.limit(dA + dB) })
     }
 
     // scales for the graphs
@@ -111,23 +109,107 @@ function dynamicRangeViz(paramObj = {}){
                     .attr('stroke','black')
                     .attr('stroke-width','1.5px')
 
+    // add limit lines for well depth and adc saturation
+    self.adcLine = self.bigSvg.append('line');
+    self.adcLine.attr('x1',0)
+        .attr('x2', self.svgWidth)
+        .attr('y1', self.yScaleBig(2**self.bitDepth))
+        .attr('y2', self.yScaleBig(2**self.bitDepth))
+        .attr('stroke','blue')
+
+    self.satLine = self.bigSvg.append('line');
+    self.satLine.attr('x1',0)
+        .attr('x2', self.svgWidth)
+        .attr('y1', self.yScaleBig(self.wellDepth / self.gain))
+        .attr('y2', self.yScaleBig(self.wellDepth / self.gain))
+        .attr('stroke','red')
+
     self.update = function(){
 
         // update the data
+        self.data = [];
         for (var i = -self.xRange / 2; i < self.xRange; i = i + 0.01){
-            var dA = self.checkedGauss(self.iA, i, self.mA, self.sigma, self.noise);
-            var dB = self.checkedGauss(self.iB, i, self.mB, self.sigma, self.noise);
-            self.data.push({'x' : i, y : dA + dB })
+            var dA = gauss(self.iA, i, self.mA, self.sigma, self.noise);
+            var dB = gauss(self.iB, i, self.mB, self.sigma, self.noise);
+            self.data.push({'x' : i, y : self.limit(dA + dB) })
         }
 
         //update scaling data
         self.yScaleBig.domain([0, Math.min(self.iA/self.gain, self.wellDepth/self.gain) * 1.1 ]);
         self.yScaleSmall.domain([0, self.iB/self.gain * 1.1 ]);
 
+        //update limit lines
+        self.satLine
+            .attr('y1', self.yScaleBig(self.wellDepth / self.gain))
+            .attr('y2', self.yScaleBig(self.wellDepth / self.gain))
+        
+        self.adcLine
+            .attr('y1', self.yScaleBig(2**self.bitDepth))
+            .attr('y2', self.yScaleBig(2**self.bitDepth))
+
         //update line data
+        self.bigLine.attr('d','')
         self.bigLine.attr('d',self.dataLineBig(self.data));
         self.smallLine.attr('d', self.dataLineSmall(self.data));
     }
+
+    // make a slider factory
+
+    self.makeSlider = function(sliderConfigObj = {}){
+        var sliderDiv = self.parentElement.append('div');
+        var sliderLabel = sliderDiv.append('div').classed('sliderLabelDiv',true).text(sliderConfigObj['displayName'])
+        var newSlider = sliderDiv.append('input').attr('type','range');
+        newSlider.attr('min', sliderConfigObj['minVal']);
+        newSlider.attr('max', sliderConfigObj['maxVal']);
+        newSlider.attr('value', sliderConfigObj['initVal']);
+
+        var displayDiv = sliderDiv.append('div').classed('sliderDisplay', true).text(sliderConfigObj['initVal']);
+
+        newSlider.on('input', function(){
+            self[sliderConfigObj['param']] = this.value;
+            self.update();
+            displayDiv.text(this.value);
+            console.log(this.value)
+        })
+    }
+
+    // add control sliders
+
+    var bitDepthSlider = self.makeSlider({
+        param : 'bitDepth',
+        displayName : 'Bit Depth',
+        minVal : 0,
+        maxVal : 16,
+        stepVal : 1,
+        initVal : 16
+    })
+
+    var noiseDepthSlider = self.makeSlider({
+        param : 'noise',
+        displayName : 'Noise, e RMS',
+        minVal : 0,
+        maxVal : 100,
+        stepVal : 1,
+        initVal : 5
+    })
+
+    var WellDepthSlider = self.makeSlider({
+        param : 'wellDepth',
+        displayName : 'Well Depth, e',
+        minVal : 100,
+        maxVal : 150000,
+        stepVal : 1,
+        initVal : 70000,
+    })
+
+    var gainSlider = self.makeSlider({
+        param : 'gain',
+        displayName : 'ADC Gain, e/ADU',
+        minVal : 0.1,
+        maxVal : 200,
+        stepVal : 1,
+        initVal : 10,
+    })
 
 }
 
