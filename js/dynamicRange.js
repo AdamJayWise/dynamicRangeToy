@@ -116,6 +116,13 @@ function dynamicRangeViz(paramObj = {}){
         .attr('y1', self.yScaleBig(2**self.bitDepth))
         .attr('y2', self.yScaleBig(2**self.bitDepth))
         .attr('stroke','blue')
+    
+    self.adcLineText = self.bigSvg.append('text');
+        self.adcLineText.text('ADC Saturation')
+            .attr('x', 85)
+            .attr('y', self.yScaleBig(2**self.bitDepth) + 10)
+            .style('fill','blue')
+            .classed('lineLabel', true)
 
     self.satLine = self.bigSvg.append('line');
     self.satLine.attr('x1',0)
@@ -123,6 +130,15 @@ function dynamicRangeViz(paramObj = {}){
         .attr('y1', self.yScaleBig(self.wellDepth / self.gain))
         .attr('y2', self.yScaleBig(self.wellDepth / self.gain))
         .attr('stroke','red')
+
+    self.satLineText = self.bigSvg.append('text');
+    self.satLineText.text('Well Depth')
+        .attr('x', 150)
+        .attr('y', self.yScaleBig(self.wellDepth / self.gain) + 10)
+        .style('fill','red')
+        .classed('lineLabel', true)
+
+
 
     self.update = function(){
 
@@ -138,7 +154,7 @@ function dynamicRangeViz(paramObj = {}){
         self.yScaleBig.domain([0, Math.min(self.iA/self.gain, self.wellDepth/self.gain) * 1.1 ]);
         self.yScaleSmall.domain([0, self.iB/self.gain * 1.1 ]);
 
-        //update limit lines
+        //update limit lines and labels
         self.satLine
             .attr('y1', self.yScaleBig(self.wellDepth / self.gain))
             .attr('y2', self.yScaleBig(self.wellDepth / self.gain))
@@ -146,6 +162,9 @@ function dynamicRangeViz(paramObj = {}){
         self.adcLine
             .attr('y1', self.yScaleBig(2**self.bitDepth))
             .attr('y2', self.yScaleBig(2**self.bitDepth))
+
+        self.adcLineText.attr('y', self.yScaleBig(2**self.bitDepth) + 10)
+        self.satLineText.attr('y', self.yScaleBig(self.wellDepth / self.gain) + 10)
 
         //update line data
         self.bigLine.attr('d','')
@@ -181,7 +200,7 @@ function dynamicRangeViz(paramObj = {}){
         minVal : 0,
         maxVal : 16,
         stepVal : 1,
-        initVal : 16
+        initVal : self.bitDepth
     })
 
     var noiseDepthSlider = self.makeSlider({
@@ -190,7 +209,7 @@ function dynamicRangeViz(paramObj = {}){
         minVal : 0,
         maxVal : 100,
         stepVal : 1,
-        initVal : 5
+        initVal : self.noise
     })
 
     var WellDepthSlider = self.makeSlider({
@@ -199,7 +218,7 @@ function dynamicRangeViz(paramObj = {}){
         minVal : 100,
         maxVal : 150000,
         stepVal : 1,
-        initVal : 70000,
+        initVal : self.wellDepth,
     })
 
     var gainSlider = self.makeSlider({
@@ -208,8 +227,28 @@ function dynamicRangeViz(paramObj = {}){
         minVal : 0.1,
         maxVal : 200,
         stepVal : 1,
-        initVal : 10,
+        initVal : self.gain,
     })
+
+    var iASlider = self.makeSlider({
+        param : 'iA',
+        displayName : 'Peak A, e',
+        minVal : 1000,
+        maxVal : 150000,
+        stepVal : 1,
+        initVal : self.iA,
+    })
+
+    var iBSlider = self.makeSlider({
+        param : 'iB',
+        displayName : 'Peak B, e',
+        minVal : 10,
+        maxVal : 5000,
+        stepVal : 1,
+        initVal : self.iB,
+    })
+
+    
 
 }
 
