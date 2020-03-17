@@ -170,7 +170,19 @@ function dynamicRangeViz(paramObj = {}){
         self.bigLine.attr('d','')
         self.bigLine.attr('d',self.dataLineBig(self.data));
         self.smallLine.attr('d', self.dataLineSmall(self.data));
+
+        //update dynamic range display
+        self.dynamicRange = self.wellDepth / Math.max(self.noise,1);
+        self.dynamicRange = Math.min(self.dynamicRange, 2**self.bitDepth / Math.max(self.noise/self.gain,1) )
+        self.dynamicRangeDisplay.text('Dynamic Range is ' + Math.round(self.dynamicRange) + ':1')
     }
+
+    // add a dynamic range display
+    self.dynamicRangeDisplay = self.parentElement.append('div');
+    self.dynamicRangeDisplay.classed('dynamicRangeDisplay', true)
+    self.dynamicRange = self.wellDepth / Math.max(self.noise,1);
+    self.dynamicRange = Math.min(self.dynamicRange, 2**self.bitDepth / self.noise)
+    self.dynamicRangeDisplay.text('Dynamic Range is ' + self.dynamicRange + ':1')
 
     // make a slider factory
 
@@ -197,7 +209,7 @@ function dynamicRangeViz(paramObj = {}){
     var bitDepthSlider = self.makeSlider({
         param : 'bitDepth',
         displayName : 'Bit Depth',
-        minVal : 0,
+        minVal : 8,
         maxVal : 16,
         stepVal : 1,
         initVal : self.bitDepth
