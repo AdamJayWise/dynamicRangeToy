@@ -222,7 +222,6 @@ function dynamicRangeViz(paramObj = {}){
             self[sliderConfigObj['param']] = this.value;
             self.update();
             displayDiv.text(this.value);
-            console.log(this.value)
         })
     }
 
@@ -313,25 +312,34 @@ function dynamicRangeViz(paramObj = {}){
 }
 
 // add one display
-var divA = d3.select('body').append('div').attr('id','divA').classed('vizDiv', true)
+var divA = d3.select('#widgetDiv').append('div').attr('id','divA').classed('vizDiv', true)
 
 var paramObjA = {
-    'parentElementSelector':'#divA',
-    'noise' : 0,
-}
+                'iA' : 30000,
+                'iB' : 250,
+                'wellDepth' : 30000,
+                'parentElementSelector':'#divA',
+                'noise' : 0,
+                'gain' : 0.46,
+                'bitDepth' : 16,
+                }
 
 var a = new dynamicRangeViz( paramObjA );
+
+/* commenting out where I had a second one of these getting made
 
 // add another display
 var divB = d3.select('body').append('div').attr('id','divB').classed('vizDiv', true)
 
 var paramObjB = {
-                    'iA' : 150000,
-                    'wellDepth' : 150000,
+                    'iA' : 8000,
+                    'iB' : 5,
+                    'wellDepth' : 8000,
                     'parentElementSelector':'#divB',
                     'noise' : 0,
-                    'gain' : 40,
+                    'gain' : 1.95,
                     'bitDepth' : 12,
                 }
 
 var b = new dynamicRangeViz(paramObjB);
+*/
