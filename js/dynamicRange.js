@@ -165,7 +165,7 @@ function dynamicRangeViz(paramObj = {}){
 
         //update scaling data
         self.yScaleBig.domain([0, Math.min(self.iA/self.gain, self.wellDepth/self.gain) * 1.1 ]);
-        self.yScaleSmall.domain([0, self.iB/self.gain * 1.1 ]);
+        self.yScaleSmall.domain([-4*self.noise, 4 * self.noise + self.iB/self.gain * 1.1 ]);
 
         //update limit lines and labels
         self.satLine
