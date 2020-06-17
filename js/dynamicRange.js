@@ -37,7 +37,7 @@ function dynamicRangeViz(paramObj = {}){
 
     // defaults
     self.parentElementSelector = 'body';
-    self.svgWidth = 220;
+    self.svgWidth = 356;
     self.svgHeight = 220;
     self.svgMargin = 5;
     self.graphMargin = 55;
@@ -107,6 +107,7 @@ function dynamicRangeViz(paramObj = {}){
         .attr('width', self.svgWidth)
         .style('display','inline')
         .style('margin', self.svgMargin)
+        .classed('smallSvg', true)
 
     // append lines to svgs and style them
     self.bigLine = self.bigSvg.append('path')
@@ -123,7 +124,7 @@ function dynamicRangeViz(paramObj = {}){
 
     // add limit lines for well depth and adc saturation
     self.adcLine = self.bigSvg.append('line');
-    self.adcLine.attr('x1', self.svgWidth/4.3)
+    self.adcLine.attr('x1', self.svgWidth/7.15 + 3)
         .attr('x2', self.svgWidth)
         .attr('y1', self.yScaleBig(2**self.bitDepth))
         .attr('y2', self.yScaleBig(2**self.bitDepth))
@@ -131,13 +132,13 @@ function dynamicRangeViz(paramObj = {}){
     
     self.adcLineText = self.bigSvg.append('text');
         self.adcLineText.text('ADC Saturation')
-            .attr('x', 150)
+            .attr('x', 200)
             .attr('y', self.yScaleBig(2**self.bitDepth) - 3)
             .style('fill','blue')
             .classed('lineLabel', true)
 
     self.satLine = self.bigSvg.append('line');
-    self.satLine.attr('x1', self.svgWidth/4.3)
+    self.satLine.attr('x1', self.svgWidth/7.15 + 3)
         .attr('x2', self.svgWidth)
         .attr('y1', self.yScaleBig(self.wellDepth / self.gain))
         .attr('y2', self.yScaleBig(self.wellDepth / self.gain))
@@ -145,7 +146,7 @@ function dynamicRangeViz(paramObj = {}){
 
     self.satLineText = self.bigSvg.append('text');
     self.satLineText.text('Well Saturation')
-        .attr('x', 150)
+        .attr('x', 250)
         .attr('y', self.yScaleBig(self.wellDepth / self.gain) + 10)
         .style('fill','red')
         .classed('lineLabel', true)
@@ -195,6 +196,12 @@ function dynamicRangeViz(paramObj = {}){
 
         self.yAxisSmall.scale(self.yScaleSmall)
         self.yAxisGSmall.call(self.yAxisSmall)
+
+        // update view box
+        self.viewBox
+        .attr('y', self.yScaleBig(self.iB / self.gain) - 10)
+        .attr('height', self.svgHeight - self.yScaleBig(self.iB / self.gain) - 5)
+
 
     }
 
@@ -258,8 +265,8 @@ function dynamicRangeViz(paramObj = {}){
         param : 'gain',
         displayName : 'ADC Gain, e<sup>-</sup>/ADU',
         minVal : 0.1,
-        maxVal : 200,
-        stepVal : 1,
+        maxVal : 20,
+        stepVal : 0.1,
         initVal : self.gain,
     })
 
@@ -284,7 +291,7 @@ function dynamicRangeViz(paramObj = {}){
     // add graph x axes
 
     self.yAxisGBig = this.bigSvg.append('g')
-        .attr('transform', `translate(${self.graphMargin/1.1},0)`)
+        .attr('transform', `translate(${self.graphMargin/1.1 + 3},0)`)
         .classed('axisLabels',true);
     self.yAxisBig = d3.axisLeft(self.yScaleBig)//.tickFormat(d3.format(".1e"))
     self.yAxisBig(self.yAxisGBig)
@@ -307,6 +314,15 @@ function dynamicRangeViz(paramObj = {}){
         .attr('transform',`translate(${self.graphMargin/4},${self.svgHeight/2}), rotate(-90)`)
         .attr('text-anchor','middle')
         .classed('axisText', true)
+
+    self.viewBox = self.bigSvg.append('rect')
+        .attr('x', self.graphMargin + 2)
+        .attr('y', self.yScaleBig(self.iB / self.gain) - 10)
+        .attr('width', self.svgWidth - self.graphMargin - 5 )
+        .attr('height', self.svgHeight - self.yScaleBig(self.iB / self.gain) - 5)
+        .attr('stroke', 'blue')
+        .attr('fill', 'none')
+        .attr('stroke-dasharray', '3 3')
 
 
 }
