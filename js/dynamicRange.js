@@ -165,7 +165,7 @@ function dynamicRangeViz(paramObj = {}){
 
         //update scaling data
         self.yScaleBig.domain([0, Math.min(self.iA/self.gain, self.wellDepth/self.gain) * 1.1 ]);
-        self.yScaleSmall.domain([-4*self.noise, 4 * self.noise + self.iB/self.gain * 1.1 ]);
+        self.yScaleSmall.domain([-2*self.noise / self.gain, 2 * self.noise/self.gain + (self.iB/self.gain) ]);
 
         //update limit lines and labels
         self.satLine
@@ -265,7 +265,7 @@ function dynamicRangeViz(paramObj = {}){
         param : 'gain',
         displayName : 'ADC Gain, e<sup>-</sup>/ADU',
         minVal : 1,
-        maxVal : 20,
+        maxVal : 25,
         stepVal : 0.1,
         initVal : self.gain,
     })
