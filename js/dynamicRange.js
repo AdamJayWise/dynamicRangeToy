@@ -264,7 +264,7 @@ function dynamicRangeViz(paramObj = {}){
     var gainSlider = self.makeSlider({
         param : 'gain',
         displayName : 'ADC Gain, e<sup>-</sup>/ADU',
-        minVal : 0.1,
+        minVal : 1,
         maxVal : 20,
         stepVal : 0.1,
         initVal : self.gain,
@@ -331,12 +331,12 @@ function dynamicRangeViz(paramObj = {}){
 var divA = d3.select('#widgetDiv').append('div').attr('id','divA').classed('vizDiv', true)
 
 var paramObjA = {
-                'iA' : 30000,
+                'iA' : 95000,
                 'iB' : 250,
-                'wellDepth' : 30000,
+                'wellDepth' : 100000,
                 'parentElementSelector':'#divA',
                 'noise' : 0,
-                'gain' : 0.46,
+                'gain' : 1.5,
                 'bitDepth' : 16,
                 }
 
