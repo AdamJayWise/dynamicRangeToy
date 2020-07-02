@@ -63,6 +63,16 @@
             .axisText {
                 font-size : 9pt;
             }
+
+           #images img {
+                max-width : 22%;
+                max-height : 22%;
+            }
+
+            #images p {
+                font-style : italic;
+                text-align : center;
+            }
         </style>
 
 
@@ -73,6 +83,20 @@
 
 
 <p><span style="font-weight: 400;">EMCCD cameras like the </span><a href="https://andor.oxinst.com/products/newton-ccd-and-emccd-cameras/newton-970"><span style="font-weight: 400;">Andor Newton 970</span></a><span style="font-weight: 400;"> are among the most sensitive detectors in the world, capable of counting individual photons.&nbsp; Sensitivity to small signals is one important parameter, but to faithfully record a scene a detector must be able to capture both large signals and small signals.&nbsp; This capability is referred to as </span><strong>dynamic range</strong><span style="font-weight: 400;">, and it is represented by the ratio of the biggest signal that can be captured to the smallest.&nbsp; Our eyes are capable of tremendous dynamic range that often surpasses the cameras we use - think of the difficulty in snapping a photo of a person against a daytime sky.&nbsp; If you set your camera&rsquo;s exposure to fit your subject&rsquo;s face, the sky behind is wildly saturated.&nbsp; Set your exposure to capture the details of the sky, and your subject becomes a silhouette.&nbsp; To capture both in a single shot requires high dynamic range, and maximizing dynamic range is critical in any application where bright and dim features coexist within a single measurement.</span></p>
+
+<div id = 'images'>
+
+    <img src = "img/original.png">
+    <img src = "img/downsampled.png">
+    <img src = "img/ground.png">
+    <img src = "img/sky.png">
+
+    <p>
+        Original image with a maximum dynamic range of 256 (left), downsampled to reduce maximum dynamic range to 16. 
+        Note the loss of smooth transitions between shades.
+        We can keep the details in the dim areas (second from right) or bright areas (right), but not both.
+    </p>
+</div>
 
 <p><span style="font-weight: 400;">But what determines dynamic range?&nbsp; To return to the original loose definition above, it is the ratio of the biggest signal we can faithfully record to the smallest.&nbsp; What determines the biggest signal in a camera?&nbsp; Certainly the full well depth - the physical capacity of a pixel to hold photogenerated charges - sets an upper bound.&nbsp; Beyond the full well depth we can no longer capture additional light - see a further discussion </span><a href="https://andor.oxinst.com/learning/view/article/dynamic-range-and-full-well-capacity"><span style="font-weight: 400;">here in the Andor Learning Center</span></a><span style="font-weight: 400;">.&nbsp; All else being equal, physically larger pixels can hold more charge.</span></p>
 
